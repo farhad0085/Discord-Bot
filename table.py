@@ -61,7 +61,7 @@ def get_output(api_endpoint=api_endpoint, query=''):
     df = pd.DataFrame(output, columns=("Title", "URL", "Publisher", "Timestamp"))
     df.index = df.index + 1
 
-    time_now = str(int(time()))
+    time_now = datetime.datetime.now().strftime("%Y-%m-%d")  # -%I-%H-%S-%p
 
     df.to_html('./htmls/table' + time_now + '.html', classes='myStyle')
 
@@ -74,7 +74,6 @@ def get_output(api_endpoint=api_endpoint, query=''):
       <link rel="stylesheet" type="text/css" href="./structure/table.css"/>
       <body>
         <div style='text-align: right; width: 100%; margin-bottom: 15px; font-family: Arial, Serif, monospace'>
-<!--          <p style="font-size: 30px; color: #3f81bf; font-weight: bold; ">Quantflare</p>-->
           <p style="font-size: 15px;"><b>Date:</b> {date_str} (UTC)</p>
           <p style="font-size: 15px;"><b>Ticker:</b> {query}</p>
         </div>
@@ -120,10 +119,11 @@ def get_output(api_endpoint=api_endpoint, query=''):
         '--header-html': './htmls/structure/header.html',
         '--footer-line': ''
     }
+    datetime_now = datetime.datetime.now().strftime("%Y-%m-%d") # -%I-%H-%S-%p
+    pdf_gen_file = './pdfs/Quantflare_'+query+ '_'+ datetime_now + '.pdf'
+    pdf.from_file('./htmls/table' + time_now + '.html', pdf_gen_file, options=options)
 
-    pdf.from_file('./htmls/table' + time_now + '.html', './pdfs/table' + time_now + '.pdf', options=options)
-
-    return './pdfs/table' + time_now + '.pdf'
+    return pdf_gen_file
 
 
 if __name__ == "__main__":

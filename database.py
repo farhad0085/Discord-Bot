@@ -18,7 +18,7 @@ def create_table():
 
 def add_message(author, content, channel, time):
     values = (author, content, channel, time)
-    print(values)
+    # print(values)
     conn = sqlite3.connect('messages.sqlite')
     curr = conn.cursor()
     curr.execute('''insert into message ("name", "message", "channel", "datetime") VALUES (?,?,?,?)''', values)

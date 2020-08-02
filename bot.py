@@ -20,7 +20,7 @@ now copy the token and replace the token in .env file
 
 
 
-import os
+import os, csv
 import discord
 from dotenv import load_dotenv
 from second import a, b
@@ -75,12 +75,16 @@ async def on_message(message):
     add_message(message.author.name, message.content, message.author.guild.name, str(time))
 
     # check if the message content matches with any of the keywords
-    if message.content in keywords:
-        pdf_file = get_output(query=message.content)
-        print("PDF:", pdf_file)
-        with open(pdf_file, 'rb') as f:
-            await message.channel.send(file=File(f, pdf_file))
-        await message.channel.send("a = " + str(a) + " b = "+str(b))
+    if str(message.content).startswith("?"):
+        if message.content in keywords:
+
+            pdf_file = get_output(query=message.content)
+            print("PDF:", pdf_file)
+            with open(pdf_file, 'rb') as f:
+                await message.channel.send(file=File(f, os.path.basename(pdf_file)))
+            # await message.channel.send("a = " + str(a) + " b = "+str(b))
+        else:
+            await message.channel.send("Ticker doesn't exist.")
 
 @client.event
 async def on_error(event, *args, **kwargs):
