@@ -76,12 +76,11 @@ async def on_message(message):
 
     # check if the message content matches with any of the keywords
     if message.content in keywords:
-
         pdf_file = get_output(query=message.content)
-
+        print("PDF:", pdf_file)
         with open(pdf_file, 'rb') as f:
             await message.channel.send(file=File(f, pdf_file))
-        # await message.channel.send("a = " + str(a) + " b = "+str(b))
+        await message.channel.send("a = " + str(a) + " b = "+str(b))
 
 @client.event
 async def on_error(event, *args, **kwargs):

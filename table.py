@@ -2,13 +2,16 @@ import pandas as pd
 import pdfkit as pdf
 import requests
 from time import time
-from datetime import datetime
+import datetime
 from sentiment import *
 
-api_endpoint = "http://newsapi.org/v2/everything?q=bitcoin&from=2020-08-02&sortBy=publishedAt&apiKey=a21ca444cf7b40ae89c0a84c99585d2e&page="
+date_str = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
+
+api_endpoint = "http://newsapi.org/v2/everything?q=bitcoin&from="+date_str+"&sortBy=publishedAt&apiKey=a21ca444cf7b40ae89c0a84c99585d2e&page="
 
 def get_output(api_endpoint=api_endpoint, query=''):
+
     try:
         query = query.split('?')[1]
     except:
@@ -18,6 +21,8 @@ def get_output(api_endpoint=api_endpoint, query=''):
     output = []
     total_results = 0
     scores = []
+
+    date_str = datetime.datetime.now().strftime("%Y-%m-%d")
 
     try:
         i = 1
@@ -42,7 +47,7 @@ def get_output(api_endpoint=api_endpoint, query=''):
             url = article['url']
             publisher = article['source']['name']
             timestamp = article['publishedAt']
-            timestamp = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ').strftime("%Y-%m-%d %I:%M %p")
+            timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ').strftime("%Y-%m-%d %I:%M %p")
             articles.append(title)
             articles.append(url)
             articles.append(publisher)
@@ -70,8 +75,8 @@ def get_output(api_endpoint=api_endpoint, query=''):
       <body>
         <div style='text-align: right; width: 100%; margin-bottom: 15px; font-family: Arial, Serif, monospace'>
 <!--          <p style="font-size: 30px; color: #3f81bf; font-weight: bold; ">Quantflare</p>-->
-          <p style="font-size: 15px;"><b>Date:</b> 2020-08-02</p>
-          <p style="font-size: 15px;"><b>Picker:</b> {query}</p>
+          <p style="font-size: 15px;"><b>Date:</b> {date_str} (UTC)</p>
+          <p style="font-size: 15px;"><b>Ticker:</b> {query}</p>
         </div>
         <div style='margin-bottom: 30px; float: center'>
             <table width='50%' border="1" class="dataframe myStyle">
@@ -81,7 +86,7 @@ def get_output(api_endpoint=api_endpoint, query=''):
                 padding: 3px; font-family: Serif, monospace; font-weight: bold;">SUMMARY</caption>
               <thead>
                 <tr>
-                  <th style="text-align: left;">Total Article</th>
+                  <th style="text-align: left;">Total Articles</th>
                   <th>{total_results}</th>
                 </tr>
               </thead>
