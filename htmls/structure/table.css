@@ -20,3 +20,32 @@
     background: #c0c0c0;
     cursor: pointer;
 }
+
+.myStyleSummary {
+    font-size: 11pt;
+    font-family: Arial, serif;
+    border-collapse: collapse;
+    border: 1px solid silver;
+
+}
+
+.myStyleSummary td, th {
+    padding: 5px;
+}
+
+.myStyleSummary tr:nth-child(even) {
+    background: #e0e0e0;
+}
+
+.myStyleSummary tr:hover {
+    background: #c0c0c0;
+    cursor: pointer;
+}
+
+table.myStyle {table-layout:fixed; width:100%;}
+table.myStyle td {overflow:hidden;}
+table.myStyle td:nth-of-type(1) {width:5%;}
+table.myStyle td:nth-of-type(2) {width:20%;}
+table.myStyle td:nth-of-type(3) {width:40%;}
+table.myStyle td:nth-of-type(4) {width:20%;}
+table.myStyle td:nth-of-type(5) {width:15%;}

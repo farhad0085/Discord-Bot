@@ -26,8 +26,9 @@ from dotenv import load_dotenv
 from second import a, b
 from discord import File
 from table import get_output
-from database import create_table, add_message
+from database import create_table, add_message, get_all_messages
 import datetime
+import pandas as pd
 
 # load virtual environment variables
 load_dotenv()
@@ -73,6 +74,8 @@ async def on_message(message):
 
     create_table()
     add_message(message.author.name, message.content, message.author.guild.name, str(time))
+    all_messages = get_all_messages()
+    df = pd.DataFrame(all_messages) # this is your dataframe
 
     # check if the message content matches with any of the keywords
     if str(message.content).startswith("?"):

@@ -23,3 +23,14 @@ def add_message(author, content, channel, time):
     curr = conn.cursor()
     curr.execute('''insert into message ("name", "message", "channel", "datetime") VALUES (?,?,?,?)''', values)
     conn.commit()
+
+def get_all_messages():
+    messages = curr.execute('''SELECT * from message''')
+    output = []
+    for message in messages:
+        output.append(list(message))
+
+    return output
+
+if __name__ == "__main__":
+    msgs = get_all_messages()

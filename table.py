@@ -5,17 +5,25 @@ from time import time
 import datetime
 from sentiment import *
 
-date_str = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
+# date_str = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
 
-api_endpoint = "http://newsapi.org/v2/everything?q=bitcoin&from="+date_str+"&sortBy=publishedAt&apiKey=a21ca444cf7b40ae89c0a84c99585d2e&page="
+# api_endpoint = "http://newsapi.org/v2/everything?q=bitcoin&from="+date_str+"&sortBy=publishedAt&apiKey=a21ca444cf7b40ae89c0a84c99585d2e&page="
 
-def get_output(api_endpoint=api_endpoint, query=''):
-
+# def get_output(api_endpoint=api_endpoint, query=''):
+def get_output(query=''):
     try:
         query = query.split('?')[1]
     except:
         pass
+
+    date_str = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    print(date_str)
+    api_endpoint = str(
+        "http://newsapi.org/v2/everything?q=" + query + "&from=" + date_str + "&sortBy=publishedAt&apiKey=a21ca444cf7b40ae89c0a84c99585d2e&page=")
+
+    print(api_endpoint)
 
     responses = []
     output = []
@@ -36,6 +44,16 @@ def get_output(api_endpoint=api_endpoint, query=''):
 
     except:
         return None
+
+    # i = 1
+    # while True:
+    #     response = requests.get(api_endpoint + str(i)).json()
+    #     i += 1
+    #     if response["status"] == 'error':
+    #         break
+    #     total_results = int(response["totalResults"])
+    #     responses.append(response)
+
     for response in responses:
         for article in response['articles']:
             articles = []
@@ -64,7 +82,7 @@ def get_output(api_endpoint=api_endpoint, query=''):
     time_now = datetime.datetime.now().strftime("%Y-%m-%d")  # -%I-%H-%S-%p
 
     df.to_html('./htmls/table' + time_now + '.html', classes='myStyle')
-
+    print("html file created")
     with open('./htmls/table' + time_now + '.html', 'r', encoding='utf-8') as table_file:
         table_content = table_file.read()
 
@@ -78,7 +96,7 @@ def get_output(api_endpoint=api_endpoint, query=''):
           <p style="font-size: 15px;"><b>Ticker:</b> {query}</p>
         </div>
         <div style='margin-bottom: 30px; float: center'>
-            <table width='50%' border="1" class="dataframe myStyle">
+            <table width='50%' border="1" class="dataframe myStyleSummary">
                 <caption style="text-align:left;
                 color: #3f81bf; border-top: 2px solid #3f81bf;
                 margin-bottom: 2px; font-size: 18px;
@@ -109,7 +127,7 @@ def get_output(api_endpoint=api_endpoint, query=''):
     '''
     with open('./htmls/table' + time_now + '.html', 'w', encoding='utf-8') as table_file:
         table_file.write(html_string)
-
+    print("html file modified")
     options = {
         "--enable-local-file-access": '',
         "quiet": '',
@@ -119,12 +137,18 @@ def get_output(api_endpoint=api_endpoint, query=''):
         '--header-html': './htmls/structure/header.html',
         '--footer-line': ''
     }
-    datetime_now = datetime.datetime.now().strftime("%Y-%m-%d") # -%I-%H-%S-%p
-    pdf_gen_file = './pdfs/Quantflare_'+query+ '_'+ datetime_now + '.pdf'
+    print("Hello")
+    datetime_now = datetime.datetime.now().strftime("%Y-%m-%d")  # -%I-%H-%S-%p
+    print(datetime_now)
+    pdf_gen_file = './pdfs/Quantflare_' + query + '_' + datetime_now + '.pdf'
+    # config = pdf.configuaration(wkhtmltopdf="C:\Windows\System32\cmd.exe")
+    # pdf.from_file('./htmls/table' + time_now + '.html', pdf_gen_file, options=options, configuaration=config)
     pdf.from_file('./htmls/table' + time_now + '.html', pdf_gen_file, options=options)
+
+    print(pdf_gen_file)
 
     return pdf_gen_file
 
 
 if __name__ == "__main__":
-    result_file_name = get_output()
+    result_file_name = get_output("?TSLA")
