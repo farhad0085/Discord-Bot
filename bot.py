@@ -23,7 +23,6 @@ now copy the token and replace the token in .env file
 import os, csv
 import discord
 from dotenv import load_dotenv
-from second import a, b
 from discord import File
 from table import get_output
 from database import create_table, add_message, get_all_messages
@@ -44,6 +43,7 @@ keywords = ["?TSLA", "?AAPL", "?FCBK"]
 
 # create a discord client for our bot
 client = discord.Client()
+create_table()
 
 @client.event
 async def on_ready():
@@ -72,7 +72,6 @@ async def on_message(message):
     time = datetime.datetime.now()
     time = time.strftime("%Y-%m-%d %I:%M %p")
 
-    create_table()
     add_message(message.author.name, message.content, message.author.guild.name, str(time))
     all_messages = get_all_messages()
     df = pd.DataFrame(all_messages) # this is your dataframe
@@ -92,7 +91,7 @@ async def on_message(message):
 @client.event
 async def on_error(event, *args, **kwargs):
     """ Handle error, if anything get error """
-    with open('err.log', 'a+') as f:
+    with open('logs/error.log', 'a+') as f:
         if event == 'on_message':
             f.write(f'Unhandled message: {args[0]}\n')
         else:
