@@ -1,40 +1,15 @@
-"""
-Change .env file with your bot's token and GUILD name
-
-if you don't have any bot created yet, go here to create one
-https://discord.com/developers/applications
-create an application
-then click the app you just created.
-now from bot tab, create new bot and give the bot administation previlage
-now copy the token and replace the token in .env file
-
-* make sure the bot you have just created are added to your channel
-"""
-
-
-
-
-
-
-
-
-
-
-import os, csv
+import os
 import discord
 from dotenv import load_dotenv
-from discord import File
-from table import get_output
-from database import create_table, add_message, get_all_messages
+from database import create_table, add_message
 import datetime
-import pandas as pd
 
 # load virtual environment variables
 load_dotenv()
 
 # get token and guild name from .env file
-TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
+APP_TOKEN = os.getenv('DISCORD_APP_TOKEN')
+GUILD_ID = os.getenv('DISCORD_GUILD_ID')
 
 
 # change this according to your need
@@ -42,20 +17,23 @@ keywords = ["?TSLA", "?AAPL", "?FCBK"]
 
 
 # create a discord client for our bot
-client = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
 create_table()
 
 @client.event
 async def on_ready():
     """This method will be run when the client is ready"""
-    for guild in client.guilds:
-        if guild.name == GUILD:
-            break
-
-    print(
-        f'{client.user} is connected to the following guild:\n'
-        f'{guild.name}(id: {guild.id})'
-    )
+    
+    try:
+        guild = next(filter(lambda g: str(g.id) == str(GUILD_ID), client.guilds))
+        print(
+            f'{client.user} is connected to the following guild:\n'
+            f'{guild.name} (id: {guild.id})'
+        )
+    except:
+        raise ValueError("Couldn't connect to the server, please check `DISCORD_GUILD_ID` value in `.env`")
 
 
 @client.event
@@ -67,26 +45,13 @@ async def on_message(message):
         return
 
     # print new incoming message
-    print('Message from {0.author}: {0.content}'.format(message))
+    print(f'Message from {message.author}: {message.content}')
 
     time = datetime.datetime.now()
     time = time.strftime("%Y-%m-%d %I:%M %p")
 
     add_message(message.author.name, message.content, message.author.guild.name, str(time))
-    all_messages = get_all_messages()
-    df = pd.DataFrame(all_messages) # this is your dataframe
-
-    # check if the message content matches with any of the keywords
-    if str(message.content).startswith("?"):
-        if message.content in keywords:
-
-            pdf_file = get_output(query=message.content)
-            print("PDF:", pdf_file)
-            with open(pdf_file, 'rb') as f:
-                await message.channel.send(file=File(f, os.path.basename(pdf_file)))
-            # await message.channel.send("a = " + str(a) + " b = "+str(b))
-        else:
-            await message.channel.send("Ticker doesn't exist.")
+    await message.channel.send("Hi! I'm a bot, Thanks for messaging!")
 
 @client.event
 async def on_error(event, *args, **kwargs):
@@ -98,4 +63,4 @@ async def on_error(event, *args, **kwargs):
             raise
 
 
-client.run(TOKEN)
+client.run(APP_TOKEN)
